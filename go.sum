@@ -1,2 +1,3 @@
 encore.dev v1.7.1 h1:Pgox5ws3v/jyMiUt2b/dUS7cYJTJIp99CJaY4F7Ukm4=
 encore.dev v1.7.1/go.mod h1:AyQpBJoalNCFScvYfjzLtOJh/KEYue/pNljoz/aA6UQ=
+github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
