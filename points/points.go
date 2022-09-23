@@ -2,6 +2,7 @@ package points
 
 import (
 	"context"
+	"errors"
 	"sort"
 	"time"
 
@@ -68,28 +69,41 @@ func SpendCustomerPoints(ctx context.Context, id int, points int64) (*CustomerTr
 	sort.Slice(transactions, func(i, j int) bool {
 		return transactions[i].Entered.Before(transactions[j].Entered)
 	})
+	customerTotal := int64(0)
+	for _, t := range transactions {
+		customerTotal += t.Points
+	}
+	if customerTotal < points {
+		return nil, errors.New("customer doesn't have enough points to spend")
+	}
 
 	adjustments := make([]*PayerTransaction, 0)
 	total := int64(0)
-	for total < points {
-		for _, adj := range transactions {
-			if adj.Points <= (points - total) {
+	for _, adj := range transactions {
+		if total < points {
+			originalPoints := adj.Points
+			leftToRemove := points - total
+			if adj.Points <= leftToRemove {
 				adjustments = append(adjustments, &PayerTransaction{
-					CustomerID: adj.CustomerID,
-					Payer:      adj.Payer,
-					Points:     0,
-					Entered:    adj.Entered,
+					CustomerID:    adj.CustomerID,
+					Payer:         adj.Payer,
+					Points:        0,
+					Entered:       adj.Entered,
+					TransactionID: adj.TransactionID,
 				})
-				total += adj.Points
+				total += originalPoints
 			} else {
 				adjustments = append(adjustments, &PayerTransaction{
-					CustomerID: adj.CustomerID,
-					Payer:      adj.Payer,
-					Points:     total - points,
-					Entered:    adj.Entered,
+					CustomerID:    adj.CustomerID,
+					Payer:         adj.Payer,
+					Points:        leftToRemove,
+					Entered:       adj.Entered,
+					TransactionID: adj.TransactionID,
 				})
-				total += points - total
+				total += originalPoints - leftToRemove
 			}
+		} else {
+			break
 		}
 	}
 	err = spendPoints(ctx, id, adjustments)
