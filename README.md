@@ -32,6 +32,15 @@ with an admin dashboard and URI for the API:
 
 Your URL may vary.
 
+## Testing
+
+Once you have Encore installed, you can run tests similar to how you do with Golang:
+
+```shell
+encore test ./...
+ok      encore.app/points       1.265s
+```
+
 ## Testing API calls locally
 
 Encore builds with it an admin dashboard that you can use to make API calls.  The right side will show Schema and have a selector
@@ -55,7 +64,7 @@ curl 'https://prod-paypoint-9t2i.encr.app/points/1' -d '{"id":1,"customer_id":1,
 curl 'https://prod-paypoint-9t2i.encr.app/points/1'
 
 # create customer
-curl -X POST 'https://prod-paypoint-9t2i.encr.app/customer/paijo'
+curl -X POST 'https://prod-paypoint-9t2i.encr.app/customer/bobbarino'
 
 # spend points
 curl -X POST 'https://prod-paypoint-9t2i.encr.app/spend/1/500'
